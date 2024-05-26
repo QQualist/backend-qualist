@@ -55,12 +55,18 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User> {
-    const user = await this.userRepo.findOneBy({ email });
+    const user = await this.userRepo.findOne({
+      where: { email },
+      relations: {
+        creator: true,
+        departament: true,
+        role: true,
+        superior: true,
+        type: true,
+      },
+    });
 
-    return {
-      ...user,
-      password: undefined,
-    };
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

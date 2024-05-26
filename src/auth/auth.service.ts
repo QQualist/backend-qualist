@@ -33,6 +33,7 @@ export class AuthService {
   }
 
   login(user: User): UserToken {
+    console.log(user);
     // Transform user in JWT
     const payload: UserPayload = {
       sub: user.uuid,
@@ -41,11 +42,11 @@ export class AuthService {
       email: user.email,
       canChangeQa: user.canChangeQa,
       sendNonConformitiesToEmail: user.sendNonConformitiesToEmail,
-      departament_uuid: user.departament.uuid,
-      creator_uuid: user.creator.uuid,
-      role_uuid: user.role.uuid,
+      departament_uuid: user.departament?.uuid,
+      creator_uuid: user.creator?.uuid,
+      role_uuid: user.role?.uuid,
       type_id: user.type.id,
-      superior_uuid: user.superior.uuid,
+      superior_uuid: user.superior?.uuid,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       deletedAt: user.deletedAt,
