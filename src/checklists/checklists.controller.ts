@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UnauthorizedException,
   HttpException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ChecklistsService } from './checklists.service';
 import { CreateChecklistDto } from './dto/create-checklist.dto';
@@ -47,12 +48,25 @@ export class ChecklistsController {
     return this.checklistsService.findOne(uuid);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateChecklistDto: UpdateChecklistDto,
+  @Patch(':uuid')
+  async update(
+    @Param('uuid') uuid: string,
+    @Body(new ValidationPipe()) updateChecklistDto: UpdateChecklistDto,
+    @Res() response: Response,
   ) {
-    return this.checklistsService.update(+id, updateChecklistDto);
+    try {
+      const checklist = await this.checklistsService.update(
+        uuid,
+        updateChecklistDto,
+      );
+      return response.status(HttpStatus.OK).send(checklist);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':id')

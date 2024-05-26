@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateChecklistDto } from './dto/create-checklist.dto';
 import { UpdateChecklistDto } from './dto/update-checklist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -41,8 +45,32 @@ export class ChecklistsService {
     return `This action returns a #${id} checklist`;
   }
 
-  update(id: number, updateChecklistDto: UpdateChecklistDto) {
-    return `This action updates a #${id} checklist`;
+  async update(uuid: string, updateChecklistDto: UpdateChecklistDto) {
+    const checklistExists = await this.checklistRepo.findOneBy({ uuid });
+
+    if (!checklistExists) {
+      throw new NotFoundException('Checklist not found');
+    }
+
+    // Check if only the `active` field is changed
+    const onlyActiveChanged = Object.keys(updateChecklistDto).every((key) => {
+      if (key === 'active') {
+        return true;
+      }
+      return updateChecklistDto[key] === checklistExists[key];
+    });
+
+    const checklist = this.checklistRepo.create({
+      ...checklistExists,
+      ...updateChecklistDto,
+      version: onlyActiveChanged
+        ? checklistExists.version
+        : checklistExists.version + 1,
+    });
+
+    await this.checklistRepo.update(uuid, checklist);
+
+    return await this.checklistRepo.findOneBy({ uuid });
   }
 
   remove(id: number) {
