@@ -1,8 +1,11 @@
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,6 +23,14 @@ export class Checklist {
 
   @Column({ type: 'int', default: 1, nullable: false })
   version: number;
+
+  @ManyToOne(() => User, (user) => user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'user_uuid' })
+  user: User | null;
 
   @CreateDateColumn({
     type: 'datetime',
