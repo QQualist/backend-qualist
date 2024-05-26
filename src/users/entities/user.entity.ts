@@ -41,7 +41,7 @@ export class User {
     nullable: true,
   })
   @JoinColumn({ name: 'departament_uuid' })
-  departament: Departament;
+  departament: Departament | null;
 
   @ManyToOne(() => User, (user) => user, {
     onDelete: 'CASCADE',
@@ -49,7 +49,7 @@ export class User {
     nullable: true,
   })
   @JoinColumn({ name: 'creator_uuid' })
-  creator: User;
+  creator: User | null;
 
   @ManyToOne(() => Role, (role) => role, {
     onDelete: 'CASCADE',
@@ -57,7 +57,7 @@ export class User {
     nullable: true,
   })
   @JoinColumn({ name: 'role_uuid' })
-  role: Role;
+  role: Role | null;
 
   @ManyToOne(() => UserType, (type) => type, {
     onDelete: 'CASCADE',
@@ -73,7 +73,7 @@ export class User {
     nullable: true,
   })
   @JoinColumn({ name: 'superior_uuid' })
-  superior: User;
+  superior: User | null;
 
   @CreateDateColumn({
     type: 'datetime',

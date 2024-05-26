@@ -5,11 +5,11 @@ export interface UserPayload {
   email: string;
   canChangeQa: boolean;
   sendNonConformitiesToEmail: boolean;
-  departament_uuid: string;
-  creator_uuid: string;
-  role_uuid: string;
+  departament_uuid: string | null;
+  creator_uuid: string | null;
+  role_uuid: string | null;
   type_id: number;
-  superior_uuid: string;
+  superior_uuid: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
