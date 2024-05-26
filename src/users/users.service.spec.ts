@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { CreateHashPassword } from '../utils/createHashPassword';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -15,6 +16,12 @@ describe('UsersService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: {},
+        },
+        {
+          provide: CreateHashPassword,
+          useValue: {
+            hashPassword: jest.fn(),
+          },
         },
       ],
     }).compile();
