@@ -1,0 +1,100 @@
+name: Continuos Integration
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - development
+  pull_request:
+    branches:
+      - main
+      - master
+      - development
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Application
+      run: npm run build
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Unit Tests
+      run: npm test
+
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+
+    services:
+        mysql:
+          image: mysql:latest
+          env:
+            MYSQL_ROOT_PASSWORD: bancodedados
+            MYSQL_DATABASE: qualist
+          ports:
+            - 3306:3306
+          options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Set up Environment Variables
+      env:
+        TYPEORM_HOST: localhost
+        TYPEORM_PORT: 3306
+        TYPEORM_USERNAME: root
+        TYPEORM_PASSWORD: bancodedados
+        TYPEORM_DATABASE: qualist
+        TYPEORM_SYNCHRONIZE: "true"
+        JWT_SECRET: 'jwtsecrettest'
+      run: |
+        echo "TYPEORM_HOST=localhost" >> .env
+        echo "TYPEORM_PORT=3306" >> .env
+        echo "TYPEORM_USERNAME=root" >> .env
+        echo "TYPEORM_PASSWORD=bancodedados" >> .env
+        echo "TYPEORM_DATABASE=qualist" >> .env
+        echo "TYPEORM_SYNCHRONIZE=true" >> .env
+        echo "JWT_SECRET=jwtsecrettest" >> .env
+
+    - name: Run End-to-End Tests
+      run: npm run test:e2e
