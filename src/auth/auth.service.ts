@@ -33,7 +33,6 @@ export class AuthService {
   }
 
   login(user: User): UserToken {
-    console.log(user);
     // Transform user in JWT
     const payload: UserPayload = {
       sub: user.uuid,

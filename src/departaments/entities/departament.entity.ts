@@ -18,7 +18,7 @@ export class Departament {
   @Column({ type: 'varchar', length: 25, nullable: false })
   name: string;
 
-  @ManyToOne(() => Departament, (departament) => departament, {
+  @ManyToOne(() => User, (user) => user, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
     nullable: true,
