@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateHashPassword } from '../utils/createHashPassword';
+import { UserType } from '../seeders/entities/user-type.entity';
 
 @Injectable()
 export class UsersService {
@@ -50,8 +51,19 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(uuid: string) {
+    const user = await this.userRepo.findOne({
+      where: { uuid },
+      relations: {
+        creator: true,
+        departament: true,
+        role: true,
+        superior: true,
+        type: true,
+      },
+    });
+
+    return user;
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -75,5 +87,16 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getPermissionUser(uuid: string): Promise<UserType> {
+    const user = await this.userRepo.findOne({
+      where: { uuid },
+      relations: {
+        type: true,
+      },
+    });
+
+    return user.type;
   }
 }

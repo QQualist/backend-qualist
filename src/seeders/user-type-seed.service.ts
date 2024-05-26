@@ -15,8 +15,8 @@ export class UserTypeSeedService {
     if (count === 0) {
       await this.userTypeRepo.save([
         { name: 'ADMINISTRATOR' },
-        { name: 'RESPONSIBLE' },
         { name: 'QUALITY ASSURANCE' },
+        { name: 'RESPONSIBLE' },
       ]);
     }
   }
