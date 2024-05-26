@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { ChecklistsModule } from './checklists/checklists.module';
+import { PrioritiesModule } from './priorities/priorities.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ChecklistsModule } from './checklists/checklists.module';
     SeedModule,
     AuthModule,
     ChecklistsModule,
+    PrioritiesModule,
   ],
   controllers: [],
   providers: [
