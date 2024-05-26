@@ -27,7 +27,7 @@ export class Checklist {
   @ManyToOne(() => User, (user) => user, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn({ name: 'user_uuid' })
   user: User | null;
