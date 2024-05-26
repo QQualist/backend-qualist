@@ -13,7 +13,7 @@ import {
 import { DepartamentsService } from './departaments.service';
 import { CreateDepartamentDto } from './dto/create-departament.dto';
 import { UpdateDepartamentDto } from './dto/update-departament.dto';
-import { ValidationPipe } from 'src/validation.pipe';
+import { ValidationPipe } from '../validation.pipe';
 import { Response } from 'express';
 
 @Controller('departaments')
