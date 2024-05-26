@@ -69,8 +69,17 @@ export class ChecklistsController {
     }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.checklistsService.remove(+id);
+  @Delete(':uuid')
+  async remove(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      await this.checklistsService.remove(uuid);
+      return response.status(HttpStatus.NO_CONTENT).send();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

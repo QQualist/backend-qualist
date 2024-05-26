@@ -52,20 +52,9 @@ export class ChecklistsService {
       throw new NotFoundException('Checklist not found');
     }
 
-    // Check if only the `active` field is changed
-    const onlyActiveChanged = Object.keys(updateChecklistDto).every((key) => {
-      if (key === 'active') {
-        return true;
-      }
-      return updateChecklistDto[key] === checklistExists[key];
-    });
-
     const checklist = this.checklistRepo.create({
-      ...checklistExists,
       ...updateChecklistDto,
-      version: onlyActiveChanged
-        ? checklistExists.version
-        : checklistExists.version + 1,
+      version: checklistExists.version + 1,
     });
 
     await this.checklistRepo.update(uuid, checklist);
@@ -73,7 +62,19 @@ export class ChecklistsService {
     return await this.checklistRepo.findOneBy({ uuid });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} checklist`;
+  async remove(uuid: string) {
+    //The item is only marked as depreciated
+    const checklistExists = await this.checklistRepo.findOneBy({ uuid });
+
+    if (!checklistExists) {
+      throw new NotFoundException('Checklist not found');
+    }
+
+    const checklist = this.checklistRepo.create({
+      ...checklistExists,
+      active: false,
+    });
+
+    await this.checklistRepo.update(uuid, checklist);
   }
 }
