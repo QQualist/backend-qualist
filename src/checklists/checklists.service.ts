@@ -37,8 +37,24 @@ export class ChecklistsService {
     return await this.checklistRepo.save(createdChecklist);
   }
 
-  findAll() {
-    return `This action returns all checklists`;
+  async findAll(user_uuid: string): Promise<Checklist[]> {
+    const userExists = await this.userService.findOne(user_uuid);
+
+    if (!userExists) {
+      throw new NotFoundException("user doesn't exists");
+    }
+
+    const type_user = await this.userService.getPermissionUser(user_uuid);
+
+    if (type_user.name === 'RESPONSIBLE') {
+      throw new UnauthorizedException(
+        'User without permission for this action',
+      );
+    }
+
+    if (type_user.name === 'ADMINISTRATOR') {
+      return await this.checklistRepo.findBy({ user: { uuid: user_uuid } });
+    }
   }
 
   async findOne(uuid: string) {
