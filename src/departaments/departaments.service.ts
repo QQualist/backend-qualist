@@ -27,8 +27,8 @@ export class DepartamentsService {
     return `This action returns all departaments`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} departament`;
+  async findOne(uuid: string) {
+    return await this.departamentRepo.findOneBy({ uuid });
   }
 
   update(id: number, updateDepartamentDto: UpdateDepartamentDto) {

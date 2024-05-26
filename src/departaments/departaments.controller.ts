@@ -39,9 +39,14 @@ export class DepartamentsController {
     return this.departamentsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.departamentsService.findOne(+id);
+  @Get(':uuid')
+  async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      const departament = await this.departamentsService.findOne(uuid);
+      return response.status(HttpStatus.OK).send(departament);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':id')
