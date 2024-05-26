@@ -41,8 +41,8 @@ export class ChecklistsService {
     return `This action returns all checklists`;
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} checklist`;
+  async findOne(uuid: string) {
+    return await this.checklistRepo.findOneBy({ uuid });
   }
 
   async update(uuid: string, updateChecklistDto: UpdateChecklistDto) {

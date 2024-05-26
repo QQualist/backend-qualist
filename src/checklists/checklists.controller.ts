@@ -44,8 +44,13 @@ export class ChecklistsController {
   }
 
   @Get(':uuid')
-  findOne(@Param('uuid') uuid: string) {
-    return this.checklistsService.findOne(uuid);
+  async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      const checklist = await this.checklistsService.findOne(uuid);
+      return response.status(HttpStatus.OK).send(checklist);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':uuid')
