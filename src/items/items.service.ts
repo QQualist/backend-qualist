@@ -27,8 +27,10 @@ export class ItemsService {
     return `This action returns all items`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(uuid: string) {
+    return this.itemRepo.findOneBy({
+      uuid,
+    });
   }
 
   update(id: number, updateItemDto: UpdateItemDto) {

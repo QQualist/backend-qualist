@@ -38,9 +38,14 @@ export class ItemsController {
     return this.itemsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemsService.findOne(+id);
+  @Get(':uuid')
+  async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      const item = await this.itemsService.findOne(uuid);
+      return response.status(HttpStatus.OK).send(item);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':id')
