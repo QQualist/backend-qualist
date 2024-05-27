@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreatePriorityDto } from './dto/create-priority.dto';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -43,8 +47,27 @@ export class PrioritiesService {
     return await this.priorityRepo.findOneBy({ uuid });
   }
 
-  update(id: number, updatePriorityDto: UpdatePriorityDto) {
-    return `This action updates a #${id} priority`;
+  async update(uuid: string, updatePriorityDto: UpdatePriorityDto) {
+    const [priorityExists, type_user] = await Promise.all([
+      this.priorityRepo.findOneBy({ uuid }),
+      this.userService.getPermissionUser(updatePriorityDto.user_uuid),
+    ]);
+
+    if (!priorityExists) {
+      throw new NotFoundException('Priority not found');
+    }
+
+    if (type_user.name === 'RESPONSIBLE') {
+      throw new UnauthorizedException(
+        'User without permission for this action',
+      );
+    }
+
+    const createdPriority = this.priorityRepo.create(updatePriorityDto);
+
+    await this.priorityRepo.update(uuid, createdPriority);
+
+    return await this.priorityRepo.findOneBy({ uuid });
   }
 
   remove(id: number) {

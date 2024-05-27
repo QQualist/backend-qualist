@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrioritiesService } from './priorities.service';
 import { CreatePriorityDto } from './dto/create-priority.dto';
@@ -52,12 +53,29 @@ export class PrioritiesController {
     }
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePriorityDto: UpdatePriorityDto,
+  @Patch(':uuid')
+  async update(
+    @Param('uuid') uuid: string,
+    @Body(new ValidationPipe()) updatePriorityDto: UpdatePriorityDto,
+    @Res() response: Response,
   ) {
-    return this.prioritiesService.update(+id, updatePriorityDto);
+    try {
+      const priority = await this.prioritiesService.update(
+        uuid,
+        updatePriorityDto,
+      );
+      return response.status(HttpStatus.OK).send(priority);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      if (error instanceof UnauthorizedException) {
+        throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':id')
