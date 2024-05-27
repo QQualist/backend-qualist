@@ -10,19 +10,16 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'checklists' })
-export class Checklist {
+@Entity({ name: 'priorities' })
+export class Priority {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
+  @Column({ type: 'varchar', length: 20, nullable: false })
   name: string;
 
-  @Column({ type: 'boolean', default: true, nullable: false })
-  active: boolean;
-
-  @Column({ type: 'int', default: 1, nullable: false })
-  version: number;
+  @Column({ type: 'int', nullable: false })
+  deadline: number;
 
   @ManyToOne(() => User, (user) => user, {
     onDelete: 'CASCADE',
@@ -30,7 +27,7 @@ export class Checklist {
     nullable: false,
   })
   @JoinColumn({ name: 'user_uuid' })
-  user: User | null;
+  user: User;
 
   @CreateDateColumn({
     type: 'datetime',
