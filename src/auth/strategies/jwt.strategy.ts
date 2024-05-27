@@ -26,7 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       canChangeQa: payload.canChangeQa,
       sendNonConformitiesToEmail: payload.sendNonConformitiesToEmail,
       departament_uuid: payload.departament_uuid,
-      creator_uuid: payload.creator_uuid,
       role_uuid: payload.role_uuid,
       type_id: payload.type_id,
       superior_uuid: payload.superior_uuid,

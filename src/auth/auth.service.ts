@@ -42,7 +42,6 @@ export class AuthService {
       canChangeQa: user.canChangeQa,
       sendNonConformitiesToEmail: user.sendNonConformitiesToEmail,
       departament_uuid: user.departament?.uuid,
-      creator_uuid: user.creator?.uuid,
       role_uuid: user.role?.uuid,
       type_id: user.type.id,
       superior_uuid: user.superior?.uuid,

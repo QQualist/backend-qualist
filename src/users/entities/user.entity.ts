@@ -43,14 +43,6 @@ export class User {
   @JoinColumn({ name: 'departament_uuid' })
   departament: Departament | null;
 
-  @ManyToOne(() => User, (user) => user, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'creator_uuid' })
-  creator: User | null;
-
   @ManyToOne(() => Role, (role) => role, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
