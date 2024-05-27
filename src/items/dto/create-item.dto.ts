@@ -22,7 +22,7 @@ export class CreateItemDto {
   @IsNumber()
   @IsInt()
   @IsOptional()
-  risk_type_id: string | undefined;
+  risk_type_id: number | undefined;
 
   @IsString()
   @IsUUID()
