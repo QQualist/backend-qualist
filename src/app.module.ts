@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { ChecklistsModule } from './checklists/checklists.module';
 import { PrioritiesModule } from './priorities/priorities.module';
+import { ItemsModule } from './items/items.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PrioritiesModule } from './priorities/priorities.module';
     AuthModule,
     ChecklistsModule,
     PrioritiesModule,
+    ItemsModule,
   ],
   controllers: [],
   providers: [
