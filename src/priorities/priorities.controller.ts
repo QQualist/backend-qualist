@@ -46,7 +46,13 @@ export class PrioritiesController {
     try {
       const priorities = await this.prioritiesService.findAll(user_uuid);
       return response.status(HttpStatus.OK).send(priorities);
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':uuid')
