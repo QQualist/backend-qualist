@@ -8,7 +8,7 @@ import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Priority } from './entities/priority.entity';
 import { In, Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PrioritiesService {
