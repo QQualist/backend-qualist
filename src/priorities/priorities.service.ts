@@ -7,7 +7,7 @@ import { CreatePriorityDto } from './dto/create-priority.dto';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Priority } from './entities/priority.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -39,8 +39,33 @@ export class PrioritiesService {
     return priority;
   }
 
-  findAll() {
-    return `This action returns all priorities`;
+  async findAll(user_uuid: string) {
+    const type_user = await this.userService.getPermissionUser(user_uuid);
+
+    if (type_user.name === 'RESPONSIBLE') {
+      throw new UnauthorizedException(
+        'User without permission for this action',
+      );
+    }
+
+    if (type_user.name === 'ADMINISTRATOR') {
+      const allUserUuids =
+        await this.userService.findAllUsersCreatedBy(user_uuid);
+      allUserUuids.push(user_uuid); // Include the administrator's own UUID
+
+      return await this.priorityRepo.find({
+        where: { user: { uuid: In(allUserUuids) } },
+      });
+    }
+
+    if (type_user.name === 'QUALITY ASSURANCE') {
+      const allUserUuids =
+        await this.userService.findCreatorAndAllCreatedUsers(user_uuid);
+
+      return await this.priorityRepo.find({
+        where: { user: { uuid: In(allUserUuids) } },
+      });
+    }
   }
 
   async findOne(uuid: string) {

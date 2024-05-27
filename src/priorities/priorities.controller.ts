@@ -38,9 +38,15 @@ export class PrioritiesController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.prioritiesService.findAll();
+  @Get('/user/:user_uuid')
+  async findAll(
+    @Param('user_uuid') user_uuid: string,
+    @Res() response: Response,
+  ) {
+    try {
+      const priorities = await this.prioritiesService.findAll(user_uuid);
+      return response.status(HttpStatus.OK).send(priorities);
+    } catch (error) {}
   }
 
   @Get(':uuid')
