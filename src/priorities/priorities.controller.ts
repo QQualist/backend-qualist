@@ -42,9 +42,14 @@ export class PrioritiesController {
     return this.prioritiesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.prioritiesService.findOne(+id);
+  @Get(':uuid')
+  async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      const priority = await this.prioritiesService.findOne(uuid);
+      return response.status(HttpStatus.OK).send(priority);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':id')

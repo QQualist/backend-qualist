@@ -39,8 +39,8 @@ export class PrioritiesService {
     return `This action returns all priorities`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} priority`;
+  async findOne(uuid: string) {
+    return await this.priorityRepo.findOneBy({ uuid });
   }
 
   update(id: number, updatePriorityDto: UpdatePriorityDto) {
