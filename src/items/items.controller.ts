@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   HttpException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -53,8 +54,16 @@ export class ItemsController {
     return this.itemsService.update(+id, updateItemDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemsService.remove(+id);
+  @Delete(':uuid')
+  async remove(@Param('uuid') uuid: string, @Res() response: Response) {
+    try {
+      await this.itemsService.remove(uuid);
+      return response.status(HttpStatus.NO_CONTENT).send();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
