@@ -48,7 +48,11 @@ export class PrioritiesService {
       );
     }
 
-    await this.priorityRepo.find();
+    return await this.priorityRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   async findOne(uuid: string) {
