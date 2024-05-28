@@ -47,11 +47,6 @@ export class CreateUserDto {
   @IsString()
   @IsUUID()
   @IsOptional()
-  creator_uuid: string;
-
-  @IsString()
-  @IsUUID()
-  @IsOptional()
   role_uuid: string;
 
   @IsNumber()

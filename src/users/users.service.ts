@@ -33,7 +33,6 @@ export class UsersService {
     const user = this.userRepo.create({
       ...createUserDto,
       departament: { uuid: createUserDto.departament_uuid },
-      creator: { uuid: createUserDto.creator_uuid },
       role: { uuid: createUserDto.role_uuid },
       superior: { uuid: createUserDto.superior_uuid },
       type: { id: createUserDto.type_id },
@@ -55,7 +54,6 @@ export class UsersService {
     const user = await this.userRepo.findOne({
       where: { uuid },
       relations: {
-        creator: true,
         departament: true,
         role: true,
         superior: true,
@@ -70,7 +68,6 @@ export class UsersService {
     const user = await this.userRepo.findOne({
       where: { email },
       relations: {
-        creator: true,
         departament: true,
         role: true,
         superior: true,
@@ -98,33 +95,5 @@ export class UsersService {
     });
 
     return user.type;
-  }
-
-  async findAllUsersCreatedBy(user_uuid: string): Promise<string[]> {
-    const users = await this.userRepo.find({
-      where: { creator: { uuid: user_uuid } },
-    });
-    let allUserUuids = users.map((user) => user.uuid);
-
-    for (const user of users) {
-      const subUsers = await this.findAllUsersCreatedBy(user.uuid);
-      allUserUuids = allUserUuids.concat(subUsers);
-    }
-
-    return allUserUuids;
-  }
-
-  async findCreatorAndAllCreatedUsers(user_uuid: string): Promise<string[]> {
-    const user = await this.userRepo.findOne({
-      where: { uuid: user_uuid },
-      relations: ['creator'],
-    });
-    if (!user || !user.creator) {
-      return [];
-    }
-    const creatorUuid = user.creator.uuid;
-    const allUserUuids = await this.findAllUsersCreatedBy(creatorUuid);
-    allUserUuids.push(creatorUuid); // Include the creator's own UUID
-    return allUserUuids;
   }
 }

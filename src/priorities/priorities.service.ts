@@ -7,7 +7,7 @@ import { CreatePriorityDto } from './dto/create-priority.dto';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Priority } from './entities/priority.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -48,24 +48,11 @@ export class PrioritiesService {
       );
     }
 
-    if (type_user.name === 'ADMINISTRATOR') {
-      const allUserUuids =
-        await this.userService.findAllUsersCreatedBy(user_uuid);
-      allUserUuids.push(user_uuid); // Include the administrator's own UUID
-
-      return await this.priorityRepo.find({
-        where: { user: { uuid: In(allUserUuids) } },
-      });
-    }
-
-    if (type_user.name === 'QUALITY ASSURANCE') {
-      const allUserUuids =
-        await this.userService.findCreatorAndAllCreatedUsers(user_uuid);
-
-      return await this.priorityRepo.find({
-        where: { user: { uuid: In(allUserUuids) } },
-      });
-    }
+    return await this.priorityRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   async findOne(uuid: string) {

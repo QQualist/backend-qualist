@@ -6,7 +6,6 @@ export interface UserPayload {
   canChangeQa: boolean;
   sendNonConformitiesToEmail: boolean;
   departament_uuid: string | null;
-  creator_uuid: string | null;
   role_uuid: string | null;
   type_id: number;
   superior_uuid: string | null;
