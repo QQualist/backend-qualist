@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { UserTypeSeedService } from './user-type-seed.service';
-import { RiskTypesService } from 'src/risk_types/risk_types.service';
+import { RiskTypesService } from '../risk_types/risk_types.service';
 
 @Injectable()
 export class SeederService {

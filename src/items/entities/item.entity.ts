@@ -1,4 +1,4 @@
-import { RiskType } from 'src/risk_types/entities/risk_type.entity';
+import { RiskType } from '../../risk_types/entities/risk_type.entity';
 import { Checklist } from '../../checklists/entities/checklist.entity';
 import { Priority } from '../../priorities/entities/priority.entity';
 import {
