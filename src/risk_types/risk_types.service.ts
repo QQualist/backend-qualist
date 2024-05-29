@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RiskType } from './entities/risk_type.entity';
 import { Repository } from 'typeorm';
@@ -36,7 +36,12 @@ export class RiskTypesService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} riskType`;
+  async findOne(id: number) {
+    const riskTypeExists = await this.riskTypeRepo.existsBy({ id });
+
+    if (!riskTypeExists) {
+      throw new NotFoundException("Risk type doesn't exists");
+    }
+    return await this.riskTypeRepo.findOneBy({ id });
   }
 }

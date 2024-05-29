@@ -3,6 +3,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Res,
 } from '@nestjs/common';
@@ -24,7 +25,15 @@ export class RiskTypesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.riskTypesService.findOne(+id);
+  async findOne(@Param('id') id: string, @Res() response: Response) {
+    try {
+      const risk_type = await this.riskTypesService.findOne(+id);
+      return response.status(HttpStatus.OK).send(risk_type);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
