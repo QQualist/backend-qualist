@@ -1,11 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRiskTypeDto } from './dto/create-risk_type.dto';
-import { UpdateRiskTypeDto } from './dto/update-risk_type.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RiskType } from './entities/risk_type.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RiskTypesService {
-  create(createRiskTypeDto: CreateRiskTypeDto) {
-    return 'This action adds a new riskType';
+  constructor(
+    @InjectRepository(RiskType)
+    private readonly riskTypeRepo: Repository<RiskType>,
+  ) {}
+
+  async seed() {
+    const count = await this.riskTypeRepo.count();
+    if (count === 0) {
+      await this.riskTypeRepo.save([
+        { name: 'COMMUNICATION' },
+        { name: 'COST' },
+        { name: 'ENVIRONMENTAL AND REGULATORY' },
+        { name: 'HUMAN RESOURCES' },
+        { name: 'OUTSOURCING' },
+        { name: 'QUALITY' },
+        { name: 'SCOPE' },
+        { name: 'SECURITY' },
+        { name: 'TECHNOLOGY' },
+        { name: 'TIMETABLE' },
+      ]);
+    }
   }
 
   findAll() {
@@ -14,13 +34,5 @@ export class RiskTypesService {
 
   findOne(id: number) {
     return `This action returns a #${id} riskType`;
-  }
-
-  update(id: number, updateRiskTypeDto: UpdateRiskTypeDto) {
-    return `This action updates a #${id} riskType`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} riskType`;
   }
 }
