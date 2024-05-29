@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RiskType } from './entities/risk_type.entity';
 import { Repository } from 'typeorm';
-import { RiskType } from './entities/risk-type.entity';
 
 @Injectable()
-export class RiskTypeSeedService {
+export class RiskTypesService {
   constructor(
     @InjectRepository(RiskType)
     private readonly riskTypeRepo: Repository<RiskType>,
@@ -26,5 +26,22 @@ export class RiskTypeSeedService {
         { name: 'TIMETABLE' },
       ]);
     }
+  }
+
+  async findAll() {
+    return await this.riskTypeRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    const riskTypeExists = await this.riskTypeRepo.existsBy({ id });
+
+    if (!riskTypeExists) {
+      throw new NotFoundException("Risk type doesn't exists");
+    }
+    return await this.riskTypeRepo.findOneBy({ id });
   }
 }

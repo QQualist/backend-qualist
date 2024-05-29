@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChecklistsModule } from './checklists/checklists.module';
 import { PrioritiesModule } from './priorities/priorities.module';
 import { ItemsModule } from './items/items.module';
+import { RiskTypesModule } from './risk_types/risk_types.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ItemsModule } from './items/items.module';
     ChecklistsModule,
     PrioritiesModule,
     ItemsModule,
+    RiskTypesModule,
   ],
   controllers: [],
   providers: [

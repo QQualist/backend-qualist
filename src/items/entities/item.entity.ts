@@ -1,6 +1,6 @@
+import { RiskType } from '../../risk_types/entities/risk_type.entity';
 import { Checklist } from '../../checklists/entities/checklist.entity';
 import { Priority } from '../../priorities/entities/priority.entity';
-import { RiskType } from '../../seeders/entities/risk-type.entity';
 import {
   Column,
   CreateDateColumn,
