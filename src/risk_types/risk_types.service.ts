@@ -28,8 +28,12 @@ export class RiskTypesService {
     }
   }
 
-  findAll() {
-    return `This action returns all riskTypes`;
+  async findAll() {
+    return await this.riskTypeRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   findOne(id: number) {
