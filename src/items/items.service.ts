@@ -20,11 +20,30 @@ export class ItemsService {
       checklist: { uuid: createItemDto.checklist_uuid },
     });
 
-    return await this.itemRepo.save(createdItem);
+    const savedItem = await this.itemRepo.save(createdItem);
+
+    // Fetch the saved items with relations
+    return this.itemRepo.findOne({
+      where: { uuid: savedItem.uuid },
+      relations: {
+        checklist: true,
+        risk_type: true,
+        priority: true,
+      }
+    })
   }
 
-  findAll() {
-    return `This action returns all items`;
+  async findAll(checklist_uuid: string) {
+    return await this.itemRepo.find({
+      where: {
+        checklist: { uuid: checklist_uuid },
+      },
+      relations: {
+        checklist: true,
+        risk_type: true,
+        priority: true,
+      },
+    });
   }
 
   async findOne(uuid: string) {

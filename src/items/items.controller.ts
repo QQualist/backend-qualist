@@ -34,9 +34,17 @@ export class ItemsController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.itemsService.findAll();
+  @Get('/checklist/:checklist_uuid')
+  async findAll(
+    @Param('checklist_uuid') checklist_uuid: string,
+    @Res() response: Response,
+  ) {
+    try {
+      const items = await this.itemsService.findAll(checklist_uuid);
+      return response.status(HttpStatus.OK).send(items);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':uuid')
