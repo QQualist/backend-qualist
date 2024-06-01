@@ -23,7 +23,7 @@ import { RiskTypesModule } from './risk_types/risk_types.module';
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       ssl: String(process.env.MYSQL_SSL).toLowerCase() === 'true',
-      synchronize: false,
+      synchronize: true,
       entities: [__dirname + '/**/*.entity{.js,.ts}'],
     }),
     ConfigModule.forRoot({

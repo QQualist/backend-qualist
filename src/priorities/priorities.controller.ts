@@ -11,6 +11,7 @@ import {
   HttpException,
   UnauthorizedException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrioritiesService } from './priorities.service';
 import { CreatePriorityDto } from './dto/create-priority.dto';
@@ -78,12 +79,12 @@ export class PrioritiesController {
       );
       return response.status(HttpStatus.OK).send(priority);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof ConflictException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       }
 
-      if (error instanceof UnauthorizedException) {
-        throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       }
 
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

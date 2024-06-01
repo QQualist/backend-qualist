@@ -4,6 +4,7 @@ import { PrioritiesService } from './priorities.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Priority } from './entities/priority.entity';
 import { UsersService } from '../users/users.service';
+import { Item } from '../items/entities/item.entity';
 
 describe('PrioritiesController', () => {
   let controller: PrioritiesController;
@@ -15,6 +16,10 @@ describe('PrioritiesController', () => {
         PrioritiesService,
         {
           provide: getRepositoryToken(Priority),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(Item),
           useValue: {},
         },
         {
