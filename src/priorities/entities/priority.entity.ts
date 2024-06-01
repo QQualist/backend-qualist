@@ -21,13 +21,8 @@ export class Priority {
   @Column({ type: 'int', nullable: false })
   deadline: number;
 
-  @ManyToOne(() => User, (user) => user, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    nullable: false,
-  })
-  @JoinColumn({ name: 'user_uuid' })
-  user: User;
+  @Column({ type: 'char', length: 7, nullable: false })
+  color: string;
 
   @CreateDateColumn({
     type: 'datetime',
