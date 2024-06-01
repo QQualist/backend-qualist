@@ -1,4 +1,5 @@
 import {
+  IsHexColor,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -18,6 +19,8 @@ export class CreatePriorityDto {
   deadline: number;
 
   @IsString()
-  @IsUUID()
-  user_uuid: string;
+  @IsHexColor()
+  @IsNotEmpty()
+  @MaxLength(7, { message: 'Hex color is too long' })
+  color: string;
 }
