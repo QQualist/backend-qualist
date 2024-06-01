@@ -19,20 +19,7 @@ export class PrioritiesService {
   ) {}
 
   async create(createPriorityDto: CreatePriorityDto) {
-    const type_user = await this.userService.getPermissionUser(
-      createPriorityDto.user_uuid,
-    );
-
-    if (type_user.name === 'RESPONSIBLE') {
-      throw new UnauthorizedException(
-        'User without permission for this action',
-      );
-    }
-
-    const createdPriority = this.priorityRepo.create({
-      ...createPriorityDto,
-      user: { uuid: createPriorityDto.user_uuid },
-    });
+    const createdPriority = this.priorityRepo.create(createPriorityDto);
 
     const priority = await this.priorityRepo.save(createdPriority);
 
@@ -60,19 +47,10 @@ export class PrioritiesService {
   }
 
   async update(uuid: string, updatePriorityDto: UpdatePriorityDto) {
-    const [priorityExists, type_user] = await Promise.all([
-      this.priorityRepo.findOneBy({ uuid }),
-      this.userService.getPermissionUser(updatePriorityDto.user_uuid),
-    ]);
+    const priorityExists = await this.priorityRepo.findOneBy({ uuid });
 
     if (!priorityExists) {
       throw new NotFoundException('Priority not found');
-    }
-
-    if (type_user.name === 'RESPONSIBLE') {
-      throw new UnauthorizedException(
-        'User without permission for this action',
-      );
     }
 
     const createdPriority = this.priorityRepo.create(updatePriorityDto);
