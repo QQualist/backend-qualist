@@ -22,7 +22,8 @@ import { RiskTypesModule } from './risk_types/risk_types.module';
       database: 'qualist',
       username: 'root',
       password: 'bancodedados',
-      synchronize: true, //Just in development environment
+      ssl: false,
+      synchronize: true,
       entities: [__dirname + '/**/*.entity{.js,.ts}'],
     }),
     ConfigModule.forRoot({
