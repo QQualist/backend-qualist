@@ -17,12 +17,12 @@ import { RiskTypesModule } from './risk_types/risk_types.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.MYSQL_HOST,
-      port: parseInt(process.env.MYSQL_PORT),
-      database: process.env.MYSQL_DATABASE,
-      username: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      ssl: String(process.env.MYSQL_SSL).toLowerCase() === 'true',
+      host: 'localhost',
+      port: 3306,
+      database: 'qualist',
+      username: 'root',
+      password: 'bancodedados',
+      ssl: false,
       synchronize: true,
       entities: [__dirname + '/**/*.entity{.js,.ts}'],
     }),
