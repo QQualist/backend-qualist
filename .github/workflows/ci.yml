@@ -59,8 +59,8 @@ jobs:
         mysql:
           image: mysql:latest
           env:
-            MYSQL_ROOT_PASSWORD: bancodedados
-            MYSQL_DATABASE: qualist
+            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
           ports:
             - 3306:3306
           options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
@@ -80,21 +80,21 @@ jobs:
 
     - name: Set up Environment Variables
       env:
-        TYPEORM_HOST: localhost
-        TYPEORM_PORT: 3306
-        TYPEORM_USERNAME: root
-        TYPEORM_PASSWORD: bancodedados
-        TYPEORM_DATABASE: qualist
+        TYPEORM_HOST: ${{ secrets.MYSQL_HOST }}
+        TYPEORM_PORT: ${{ secrets.MYSQL_PORT }}
+        TYPEORM_USERNAME: ${{ secrets.MYSQL_USER }}
+        TYPEORM_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        TYPEORM_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         TYPEORM_SYNCHRONIZE: "true"
-        JWT_SECRET: 'jwtsecrettest'
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
-        echo "TYPEORM_HOST=localhost" >> .env
-        echo "TYPEORM_PORT=3306" >> .env
-        echo "TYPEORM_USERNAME=root" >> .env
-        echo "TYPEORM_PASSWORD=bancodedados" >> .env
-        echo "TYPEORM_DATABASE=qualist" >> .env
+        echo "TYPEORM_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+        echo "TYPEORM_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+        echo "TYPEORM_USERNAME=${{ secrets.MYSQL_USER }}" >> .env
+        echo "TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+        echo "TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
         echo "TYPEORM_SYNCHRONIZE=true" >> .env
-        echo "JWT_SECRET=jwtsecrettest" >> .env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
     - name: Run End-to-End Tests
       run: npm run test:e2e
