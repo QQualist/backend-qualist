@@ -97,4 +97,12 @@ jobs:
         echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
     - name: Run End-to-End Tests
-      run: npm run test:e2e -- --env TYPEORM_HOST=${{ secrets.MYSQL_HOST }} TYPEORM_PORT=${{ secrets.MYSQL_PORT }} TYPEORM_USERNAME=${{ secrets.MYSQL_USER }} TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }} TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }} TYPEORM_SYNCHRONIZE=true JWT_SECRET=${{ secrets.JWT_SECRET }}
+      run: |
+          export TYPEORM_HOST=${{ secrets.MYSQL_HOST }}
+          export TYPEORM_PORT=${{ secrets.MYSQL_PORT }}
+          export TYPEORM_USERNAME=${{ secrets.MYSQL_USERNAME }}
+          export TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          export TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          export TYPEORM_SYNCHRONIZE=true
+          export JWT_SECRET=${{ secrets.JWT_SECRET }}
+          npm run test:e2e
