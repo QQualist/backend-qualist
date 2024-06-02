@@ -88,21 +88,17 @@ jobs:
         TYPEORM_SYNCHRONIZE: "true"
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
-        echo "TYPEORM_HOST=${{ secrets.MYSQL_HOST }}" >> .env
-        echo "TYPEORM_PORT=${{ secrets.MYSQL_PORT }}" >> .env
-        echo "TYPEORM_USERNAME=${{ secrets.MYSQL_USER }}" >> .env
-        echo "TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-        echo "TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-        echo "TYPEORM_SYNCHRONIZE=true" >> .env
-        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+        echo "TYPEORM_HOST=${{ secrets.MYSQL_HOST }}" >> .env.test
+        echo "TYPEORM_PORT=${{ secrets.MYSQL_PORT }}" >> .env.test
+        echo "TYPEORM_USERNAME=${{ secrets.MYSQL_USER }}" >> .env.test
+        echo "TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env.test
+        echo "TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env.test
+        echo "TYPEORM_SYNCHRONIZE=true" >> .env.test
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.test
 
     - name: Run End-to-End Tests
       run: |
-          export TYPEORM_HOST=${{ secrets.MYSQL_HOST }}
-          export TYPEORM_PORT=${{ secrets.MYSQL_PORT }}
-          export TYPEORM_USERNAME=${{ secrets.MYSQL_USERNAME }}
-          export TYPEORM_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          export TYPEORM_DATABASE=${{ secrets.MYSQL_DATABASE }}
-          export TYPEORM_SYNCHRONIZE=true
-          export JWT_SECRET=${{ secrets.JWT_SECRET }}
-          npm run test:e2e
+        mv .env.test .env
+        npm run test:e2e
+      env:
+        NODE_ENV: test
