@@ -30,15 +30,7 @@ export class PrioritiesService {
     return priority;
   }
 
-  async findAll(user_uuid: string) {
-    const type_user = await this.userService.getPermissionUser(user_uuid);
-
-    if (type_user.name === 'RESPONSIBLE') {
-      throw new UnauthorizedException(
-        'User without permission for this action',
-      );
-    }
-
+  async findAll() {
     return await this.priorityRepo.find({
       order: {
         name: 'ASC',

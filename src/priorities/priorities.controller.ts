@@ -39,13 +39,10 @@ export class PrioritiesController {
     }
   }
 
-  @Get('/user/:user_uuid')
-  async findAll(
-    @Param('user_uuid') user_uuid: string,
-    @Res() response: Response,
-  ) {
+  @Get()
+  async findAll(@Res() response: Response) {
     try {
-      const priorities = await this.prioritiesService.findAll(user_uuid);
+      const priorities = await this.prioritiesService.findAll();
       return response.status(HttpStatus.OK).send(priorities);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
