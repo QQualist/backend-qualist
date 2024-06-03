@@ -13,13 +13,7 @@ import { AuthRequest } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
-import {
-  ApiBody,
-  ApiHeader,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth')

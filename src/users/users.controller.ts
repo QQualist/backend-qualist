@@ -17,7 +17,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { ValidationPipe } from '../validation.pipe';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
-import { ApiBody, ApiExcludeEndpoint, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('users')
 @ApiTags('Users')

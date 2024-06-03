@@ -18,7 +18,15 @@ import { CreatePriorityDto } from './dto/create-priority.dto';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { ValidationPipe } from '../validation.pipe';
 import { Response } from 'express';
-import { ApiBody, ApiExcludeEndpoint, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('priorities')
 @ApiTags('Priorities')
@@ -110,6 +118,7 @@ export class PrioritiesController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error.',
   })
+  @ApiParam({ name: 'uuid', description: 'UUID of the priority' })
   async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
     try {
       const priority = await this.prioritiesService.findOne(uuid);
