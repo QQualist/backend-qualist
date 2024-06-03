@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChecklistDto } from './dto/create-checklist.dto';
 import { UpdateChecklistDto } from './dto/update-checklist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,42 +15,13 @@ export class ChecklistsService {
   ) {}
 
   async create(createChecklistDto: CreateChecklistDto) {
-    const type_user = await this.userService.getPermissionUser(
-      createChecklistDto.user_uuid,
-    );
-
-    if (type_user.name === 'RESPONSIBLE') {
-      throw new UnauthorizedException(
-        'User without permission to perform this action',
-      );
-    }
-
-    const createdChecklist = this.checklistRepo.create({
-      ...createChecklistDto,
-      user: { uuid: createChecklistDto.user_uuid },
-    });
+    const createdChecklist = this.checklistRepo.create(createChecklistDto);
 
     return await this.checklistRepo.save(createdChecklist);
   }
 
-  async findAll(user_uuid: string): Promise<Checklist[]> {
-    const userExists = await this.userService.findOne(user_uuid);
-
-    if (!userExists) {
-      throw new NotFoundException("user doesn't exists");
-    }
-
-    const type_user = await this.userService.getPermissionUser(user_uuid);
-
-    if (type_user.name === 'RESPONSIBLE') {
-      throw new UnauthorizedException(
-        'User without permission for this action',
-      );
-    }
-
-    if (type_user.name === 'ADMINISTRATOR') {
-      return await this.checklistRepo.findBy({ user: { uuid: user_uuid } });
-    }
+  async findAll(): Promise<Checklist[]> {
+    return await this.checklistRepo.find();
   }
 
   async findOne(uuid: string) {

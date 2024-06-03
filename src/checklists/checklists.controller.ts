@@ -38,9 +38,9 @@ export class ChecklistsController {
     }
   }
 
-  @Get('/user/:user_uuid')
-  async findAll(@Param('user_uuid') uuid: string, @Res() response: Response) {
-    const checklists = await this.checklistsService.findAll(uuid);
+  @Get()
+  async findAll(@Res() response: Response) {
+    const checklists = await this.checklistsService.findAll();
     return response.status(HttpStatus.OK).send(checklists);
   }
 

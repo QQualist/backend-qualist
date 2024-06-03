@@ -13,10 +13,7 @@ export class DepartamentsService {
   ) {}
 
   async create(createDepartamentDto: CreateDepartamentDto) {
-    const createDepartament = this.departamentRepo.create({
-      ...createDepartamentDto,
-      user: { uuid: createDepartamentDto.user_uuid },
-    });
+    const createDepartament = this.departamentRepo.create(createDepartamentDto);
 
     const departament = await this.departamentRepo.save(createDepartament);
 
