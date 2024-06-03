@@ -1,11 +1,8 @@
-import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,14 +14,6 @@ export class Departament {
 
   @Column({ type: 'varchar', length: 25, nullable: false })
   name: string;
-
-  @ManyToOne(() => User, (user) => user, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'user_uuid' })
-  user: User;
 
   @CreateDateColumn({
     type: 'datetime',

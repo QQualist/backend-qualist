@@ -1,11 +1,8 @@
-import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,14 +17,6 @@ export class Role {
 
   @Column({ type: 'boolean', default: false, nullable: false })
   canDispenseNonConformities: boolean;
-
-  @ManyToOne(() => User, (user) => user, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-    nullable: false,
-  })
-  @JoinColumn({ name: 'user_uuid' })
-  user: User;
 
   @CreateDateColumn({
     type: 'datetime',
