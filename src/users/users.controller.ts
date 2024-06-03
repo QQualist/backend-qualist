@@ -17,13 +17,39 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { ValidationPipe } from '../validation.pipe';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @IsPublic()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The user has been successfully created.',
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'User already exists.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiBody({ type: CreateUserDto })
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
     @Res() response: Response,
@@ -41,21 +67,25 @@ export class UsersController {
   }
 
   @Get()
+  @ApiExcludeEndpoint()
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':uuid')
+  @ApiExcludeEndpoint()
   findOne(@Param('uuid') uuid: string) {
     return this.usersService.findOne(uuid);
   }
 
   @Patch(':id')
+  @ApiExcludeEndpoint()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
+  @ApiExcludeEndpoint()
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }

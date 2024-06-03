@@ -18,12 +18,40 @@ import { CreatePriorityDto } from './dto/create-priority.dto';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { ValidationPipe } from '../validation.pipe';
 import { Response } from 'express';
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('priorities')
+@ApiTags('Priorities')
 export class PrioritiesController {
   constructor(private readonly prioritiesService: PrioritiesService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new priority' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The priority has been successfully created.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiBody({ type: CreatePriorityDto })
   async create(
     @Body(new ValidationPipe()) createPriorityDto: CreatePriorityDto,
     @Res() response: Response,
@@ -39,13 +67,28 @@ export class PrioritiesController {
     }
   }
 
-  @Get('/user/:user_uuid')
-  async findAll(
-    @Param('user_uuid') user_uuid: string,
-    @Res() response: Response,
-  ) {
+  @Get()
+  @ApiOperation({ summary: 'Find all priorities' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Priority found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  async findAll(@Res() response: Response) {
     try {
-      const priorities = await this.prioritiesService.findAll(user_uuid);
+      const priorities = await this.prioritiesService.findAll();
       return response.status(HttpStatus.OK).send(priorities);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -57,6 +100,25 @@ export class PrioritiesController {
   }
 
   @Get(':uuid')
+  @ApiOperation({ summary: 'Find one priority by UUID' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Priority found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiParam({ name: 'uuid', description: 'UUID of the priority' })
   async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
     try {
       const priority = await this.prioritiesService.findOne(uuid);
@@ -67,6 +129,30 @@ export class PrioritiesController {
   }
 
   @Patch(':uuid')
+  @ApiOperation({ summary: 'Update a priority' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Updated priority.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiBody({ type: UpdatePriorityDto })
+  @ApiParam({ name: 'uuid', description: 'UUID of the priority' })
   async update(
     @Param('uuid') uuid: string,
     @Body(new ValidationPipe()) updatePriorityDto: UpdatePriorityDto,
@@ -92,6 +178,7 @@ export class PrioritiesController {
   }
 
   @Delete(':id')
+  @ApiExcludeEndpoint()
   remove(@Param('id') id: string) {
     return this.prioritiesService.remove(+id);
   }
