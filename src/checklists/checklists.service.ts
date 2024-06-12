@@ -46,18 +46,12 @@ export class ChecklistsService {
   }
 
   async remove(uuid: string) {
-    //The item is only marked as depreciated
     const checklistExists = await this.checklistRepo.findOneBy({ uuid });
 
     if (!checklistExists) {
       throw new NotFoundException('Checklist not found');
     }
 
-    const checklist = this.checklistRepo.create({
-      ...checklistExists,
-      active: false,
-    });
-
-    await this.checklistRepo.update(uuid, checklist);
+    await this.checklistRepo.softDelete({ uuid });
   }
 }
