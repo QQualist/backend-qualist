@@ -20,8 +20,12 @@ export class DepartamentsService {
     return departament;
   }
 
-  findAll() {
-    return `This action returns all departaments`;
+  async findAll() {
+    return await this.departamentRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   async findOne(uuid: string) {

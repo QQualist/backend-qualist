@@ -68,14 +68,7 @@ export class DepartamentsController {
   }
 
   @Get()
-  @ApiExcludeEndpoint()
-  findAll() {
-    return this.departamentsService.findAll();
-  }
-
-  @Get(':uuid')
-  @ApiOperation({ summary: 'Find one user by UUID' })
-  @ApiParam({ name: 'uuid', description: 'UUID of the user' })
+  @ApiOperation({ summary: 'Find all departaments' })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer token',
@@ -83,7 +76,7 @@ export class DepartamentsController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User found by his UUID',
+    description: 'Departaments found',
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,6 +86,35 @@ export class DepartamentsController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'User not authorized to do the operation.',
   })
+  async findAll(@Res() response: Response) {
+    try {
+      const departaments = await this.departamentsService.findAll();
+      return response.status(HttpStatus.OK).send(departaments);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get(':uuid')
+  @ApiOperation({ summary: 'Find one departament by UUID' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Departament found by his UUID',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiParam({ name: 'uuid', description: 'UUID of the departament' })
   async findOne(@Param('uuid') uuid: string, @Res() response: Response) {
     try {
       const departament = await this.departamentsService.findOne(uuid);
