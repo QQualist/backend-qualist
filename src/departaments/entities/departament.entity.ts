@@ -12,7 +12,7 @@ export class Departament {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ type: 'varchar', length: 25, nullable: false })
+  @Column({ type: 'varchar', length: 35, nullable: false })
   name: string;
 
   @CreateDateColumn({
