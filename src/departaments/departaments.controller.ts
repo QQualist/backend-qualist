@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   HttpException,
+  NotFoundException,
 } from '@nestjs/common';
 import { DepartamentsService } from './departaments.service';
 import { CreateDepartamentDto } from './dto/create-departament.dto';
@@ -124,13 +125,53 @@ export class DepartamentsController {
     }
   }
 
-  @Patch(':id')
-  @ApiExcludeEndpoint()
-  update(
-    @Param('id') id: string,
-    @Body() updateDepartamentDto: UpdateDepartamentDto,
+  @Patch(':uuid')
+  @ApiOperation({ summary: 'Updates the departament by UUID' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Updated departament.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Departament not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiParam({ name: 'uuid', description: 'UUID of the departament' })
+  @ApiBody({ type: UpdateDepartamentDto })
+  async update(
+    @Param('uuid') uuid: string,
+    @Body(new ValidationPipe()) updateDepartamentDto: UpdateDepartamentDto,
+    @Res() response: Response,
   ) {
-    return this.departamentsService.update(+id, updateDepartamentDto);
+    try {
+      const departament = await this.departamentsService.update(
+        uuid,
+        updateDepartamentDto,
+      );
+      return response.status(HttpStatus.OK).send(departament);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':id')
