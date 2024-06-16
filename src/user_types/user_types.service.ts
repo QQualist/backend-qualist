@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserTypeDto } from './dto/create-user_type.dto';
-import { UpdateUserTypeDto } from './dto/update-user_type.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserType } from './entities/user-type.entity';
 
 @Injectable()
 export class UserTypesService {
-  create(createUserTypeDto: CreateUserTypeDto) {
-    return 'This action adds a new userType';
+  constructor(
+    @InjectRepository(UserType)
+    private readonly userTypeRepo: Repository<UserType>,
+  ) {}
+
+  async seed() {
+    const count = await this.userTypeRepo.count();
+    if (count === 0) {
+      await this.userTypeRepo.save([
+        { name: 'ADMINISTRATOR' },
+        { name: 'QUALITY ASSURANCE' },
+        { name: 'RESPONSIBLE' },
+      ]);
+    }
   }
 
-  findAll() {
-    return `This action returns all userTypes`;
+  async findAll() {
+    return await this.userTypeRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   findOne(id: number) {
     return `This action returns a #${id} userType`;
-  }
-
-  update(id: number, updateUserTypeDto: UpdateUserTypeDto) {
-    return `This action updates a #${id} userType`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userType`;
   }
 }

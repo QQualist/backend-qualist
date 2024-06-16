@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Res,
+} from '@nestjs/common';
 import { UserTypesService } from './user_types.service';
-import { CreateUserTypeDto } from './dto/create-user_type.dto';
-import { UpdateUserTypeDto } from './dto/update-user_type.dto';
+import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @Controller('user-types')
 export class UserTypesController {
   constructor(private readonly userTypesService: UserTypesService) {}
 
-  @Post()
-  create(@Body() createUserTypeDto: CreateUserTypeDto) {
-    return this.userTypesService.create(createUserTypeDto);
-  }
-
   @Get()
-  findAll() {
-    return this.userTypesService.findAll();
+  @ApiOperation({ summary: 'Find all user types' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Types of user found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  async findAll(@Res() response: Response) {
+    try {
+      const userTypes = await this.userTypesService.findAll();
+      return response.status(HttpStatus.OK).send(userTypes);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userTypesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserTypeDto: UpdateUserTypeDto) {
-    return this.userTypesService.update(+id, updateUserTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userTypesService.remove(+id);
   }
 }

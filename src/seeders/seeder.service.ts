@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UserTypeSeedService } from './user-type-seed.service';
 import { RiskTypesService } from '../risk_types/risk_types.service';
+import { UserTypesService } from '../user_types/user_types.service';
 
 @Injectable()
 export class SeederService {
@@ -8,14 +8,14 @@ export class SeederService {
 
   constructor(
     private readonly riskTypeService: RiskTypesService,
-    private readonly userTypeSeedService: UserTypeSeedService,
+    private readonly userTypeService: UserTypesService,
   ) {}
 
   async seed() {
     this.logger.log('Starting seeding process...');
 
     await this.riskTypeService.seed();
-    await this.userTypeSeedService.seed();
+    await this.userTypeService.seed();
 
     this.logger.log('Seeding process finished.');
   }
