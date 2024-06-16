@@ -18,6 +18,11 @@ export class MailingService {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
       },
+      pool: true,
+      rateLimit: 5, // Limit 5 emails by second
+      maxConnections: 5,
+      maxMessages: 100,
+      rateDelta: 20000, // 20 seconds
       tls: {
         ciphers: process.env.MAIL_CIPHERS,
       },
@@ -59,6 +64,29 @@ export class MailingService {
     return '';
   }
 
+  private async delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+  private async sendWithRetry(
+    mailOptions: nodemailer.SendMailOptions,
+    retries = 3,
+    delayTime = 1000,
+  ) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        await this.transporter.sendMail(mailOptions);
+        return;
+      } catch (err) {
+        if (i < retries - 1) {
+          await this.delay(delayTime);
+          delayTime *= 2; // Exponential backoff
+        } else {
+          throw err;
+        }
+      }
+    }
+  }
+
   async sendMail(
     templateName: string,
     data: any,
@@ -66,7 +94,7 @@ export class MailingService {
   ) {
     const css = this.loadCssFile(templateName);
     const html = this.templates[templateName]({ ...data, css });
-    await this.transporter.sendMail({
+    await this.sendWithRetry({
       ...options,
       from: `Qualist < ${process.env.MAIL_USERNAME} >`,
       html,
