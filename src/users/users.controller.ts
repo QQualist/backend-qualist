@@ -20,6 +20,7 @@ import { IsPublic } from '../auth/decorators/is-public.decorator';
 import {
   ApiBody,
   ApiExcludeEndpoint,
+  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -67,9 +68,31 @@ export class UsersController {
   }
 
   @Get()
-  @ApiExcludeEndpoint()
-  findAll() {
-    return this.usersService.findAll();
+  @ApiOperation({ summary: 'Find all users' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Users found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  async findAll(@Res() response: Response) {
+    try {
+      const users = await this.usersService.findAll();
+      return response.status(HttpStatus.OK).send(users);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':uuid')

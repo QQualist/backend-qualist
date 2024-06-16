@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateHashPassword } from '../utils/createHashPassword';
-import { UserType } from '../seeders/entities/user-type.entity';
+import { UserType } from '../user_types/entities/user-type.entity';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +46,12 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   async findOne(uuid: string) {
