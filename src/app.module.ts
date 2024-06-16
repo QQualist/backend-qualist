@@ -14,6 +14,7 @@ import { ItemsModule } from './items/items.module';
 import { RiskTypesModule } from './risk_types/risk_types.module';
 import { ResponsiblesModule } from './responsibles/responsibles.module';
 import { MailingModule } from './mailing/mailing.module';
+import { UserTypesModule } from './user_types/user_types.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -41,6 +42,7 @@ import { MailingModule } from './mailing/mailing.module';
     RiskTypesModule,
     ResponsiblesModule,
     MailingModule,
+    UserTypesModule,
   ],
   controllers: [],
   providers: [
