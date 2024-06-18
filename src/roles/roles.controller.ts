@@ -15,7 +15,13 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ValidationPipe } from 'src/validation.pipe';
 import { Response } from 'express';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('roles')
 @ApiTags('Roles')
@@ -54,8 +60,31 @@ export class RolesController {
   }
 
   @Get()
-  findAll() {
-    return this.rolesService.findAll();
+  @ApiOperation({ summary: 'Find all roles' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Roles found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  async findAll(@Res() response: Response) {
+    try {
+      const roles = await this.rolesService.findAll();
+      return response.status(HttpStatus.OK).send(roles);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')

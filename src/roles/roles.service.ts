@@ -20,8 +20,8 @@ export class RolesService {
     return role;
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAll() {
+    return this.roleRepo.find();
   }
 
   findOne(id: number) {
