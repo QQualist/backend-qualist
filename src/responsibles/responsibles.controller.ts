@@ -16,7 +16,14 @@ import { CreateResponsibleDto } from './dto/create-responsible.dto';
 import { UpdateResponsibleDto } from './dto/update-responsible.dto';
 import { ValidationPipe } from '../validation.pipe';
 import { Response } from 'express';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('responsibles')
 @ApiTags('responsibles')
@@ -59,9 +66,41 @@ export class ResponsiblesController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.responsiblesService.findAll();
+  @Get('/departament/:departament_uuid')
+  @ApiOperation({ summary: 'Find all responsibles by departament UUID' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Responsibles found',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiParam({
+    name: 'departament_uuid',
+    description: 'UUID of the departament',
+  })
+  async findAll(
+    @Param('departament_uuid') departament_uuid: string,
+    @Res() response: Response,
+  ) {
+    try {
+      const responsibles =
+        await this.responsiblesService.findAll(departament_uuid);
+
+      return response.status(HttpStatus.OK).send(responsibles);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')

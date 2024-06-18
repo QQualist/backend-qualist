@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateResponsibleDto } from './dto/create-responsible.dto';
 import { UpdateResponsibleDto } from './dto/update-responsible.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Responsible } from './entities/responsible.entity';
-import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
 import { MailingService } from '../mailing/mailing.service';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Responsible } from './entities/responsible.entity';
 
 @Injectable()
 export class ResponsiblesService {
   constructor(
-    @InjectRepository(Responsible)
-    private readonly responsibleRepo: Repository<Responsible>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     private readonly userService: UsersService,
     private readonly mailingService: MailingService,
   ) {}
@@ -44,8 +45,28 @@ export class ResponsiblesService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all responsibles`;
+  async findAll(departament_uuid: string) {
+    const responsibles: Responsible[] = await this.userRepo.find({
+      relations: {
+        role: true,
+        superior: true,
+        type: true,
+      },
+      where: {
+        departament: { uuid: departament_uuid },
+      },
+    });
+
+    responsibles.forEach(async (responsible) => {
+      delete responsible.password; // Remove password from top-level responsible
+
+      // Access the nested superior object and remove password
+      if (responsible.superior !== null) {
+        delete responsible.superior.password;
+      }
+    });
+
+    return responsibles;
   }
 
   findOne(id: number) {

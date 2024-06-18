@@ -47,11 +47,18 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.userRepo.find({
+    const users = await this.userRepo.find({
       order: {
         name: 'ASC',
       },
     });
+
+    for (const user of users) {
+      //Remove password attribute
+      delete user.password;
+    }
+
+    return users;
   }
 
   async findOne(uuid: string) {
