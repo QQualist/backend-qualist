@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   HttpException,
+  NotFoundException,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -19,6 +20,7 @@ import {
   ApiBody,
   ApiHeader,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -92,9 +94,50 @@ export class RolesController {
     return this.rolesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.update(+id, updateRoleDto);
+  @Patch(':uuid')
+  @ApiOperation({ summary: 'Updates the role by UUID' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Updated role.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Role not found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiParam({ name: 'uuid', description: 'UUID of the role' })
+  @ApiBody({ type: UpdateRoleDto })
+  async update(
+    @Param('uuid') uuid: string,
+    @Body(new ValidationPipe()) updateRoleDto: UpdateRoleDto,
+    @Res() response: Response,
+  ) {
+    try {
+      const role = await this.rolesService.update(uuid, updateRoleDto);
+      return response.status(HttpStatus.OK).send(role);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':id')
