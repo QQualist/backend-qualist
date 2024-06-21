@@ -73,8 +73,8 @@ export class ResponsiblesService {
     return `This action returns a #${id} responsible`;
   }
 
-  update(id: number, updateResponsibleDto: UpdateResponsibleDto) {
-    return `This action updates a #${id} responsible`;
+  async update(uuid: string, updateResponsibleDto: UpdateResponsibleDto) {
+    return await this.userService.update(uuid, updateResponsibleDto);
   }
 
   remove(id: number) {

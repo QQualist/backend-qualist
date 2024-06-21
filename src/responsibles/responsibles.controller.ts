@@ -10,6 +10,7 @@ import {
   HttpStatus,
   ConflictException,
   HttpException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ResponsiblesService } from './responsibles.service';
 import { CreateResponsibleDto } from './dto/create-responsible.dto';
@@ -18,6 +19,7 @@ import { ValidationPipe } from '../validation.pipe';
 import { Response } from 'express';
 import {
   ApiBody,
+  ApiExcludeEndpoint,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -104,19 +106,58 @@ export class ResponsiblesController {
   }
 
   @Get(':id')
+  @ApiExcludeEndpoint()
   findOne(@Param('id') id: string) {
     return this.responsiblesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateResponsibleDto: UpdateResponsibleDto,
+  @Patch(':uuid')
+  @ApiOperation({ summary: 'Update a responsible' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Updated responsible.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiBody({ type: UpdateResponsibleDto })
+  @ApiParam({ name: 'uuid', description: 'UUID of the responsible' })
+  async update(
+    @Param('uuid') uuid: string,
+    @Body(new ValidationPipe()) updateResponsibleDto: UpdateResponsibleDto,
+    @Res() response: Response,
   ) {
-    return this.responsiblesService.update(+id, updateResponsibleDto);
+    try {
+      const responsible = await this.responsiblesService.update(
+        uuid,
+        updateResponsibleDto,
+      );
+      return response.status(HttpStatus.OK).send(responsible);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':id')
+  @ApiExcludeEndpoint()
   remove(@Param('id') id: string) {
     return this.responsiblesService.remove(+id);
   }

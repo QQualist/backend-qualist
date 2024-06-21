@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -89,8 +93,33 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(uuid: string, updateUserDto: UpdateUserDto) {
+    const userExists = await this.userRepo.findOneBy({ uuid });
+
+    if (!userExists) {
+      throw new NotFoundException('User not found.');
+    }
+
+    const createdUser = this.userRepo.create({
+      ...updateUserDto,
+      role: { uuid: updateUserDto.role_uuid },
+      departament: { uuid: updateUserDto.departament_uuid },
+      superior: { uuid: updateUserDto.superior_uuid },
+      type: { id: updateUserDto.type_id },
+    });
+
+    await this.userRepo.update(uuid, createdUser);
+
+    const user = await this.findOne(uuid);
+
+    if (user.superior) {
+      delete user.superior.password;
+    }
+
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
   remove(id: number) {
