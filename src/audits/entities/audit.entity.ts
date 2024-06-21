@@ -27,7 +27,7 @@ export class Audit {
     nullable: false,
   })
   @JoinColumn({ name: 'audit_status_id' })
-  audit_status_id: string;
+  audit_status_id: number;
 
   @CreateDateColumn({
     type: 'datetime',
