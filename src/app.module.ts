@@ -17,6 +17,7 @@ import { MailingModule } from './mailing/mailing.module';
 import { UserTypesModule } from './user_types/user_types.module';
 import { RolesModule } from './roles/roles.module';
 import { AuditStatusModule } from './audit_status/audit_status.module';
+import { AuditsModule } from './audits/audits.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -47,6 +48,7 @@ import { AuditStatusModule } from './audit_status/audit_status.module';
     UserTypesModule,
     RolesModule,
     AuditStatusModule,
+    AuditsModule,
   ],
   controllers: [],
   providers: [
