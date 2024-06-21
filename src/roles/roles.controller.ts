@@ -18,6 +18,7 @@ import { ValidationPipe } from 'src/validation.pipe';
 import { Response } from 'express';
 import {
   ApiBody,
+  ApiExcludeEndpoint,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -90,6 +91,7 @@ export class RolesController {
   }
 
   @Get(':id')
+  @ApiExcludeEndpoint()
   findOne(@Param('id') id: string) {
     return this.rolesService.findOne(+id);
   }
@@ -141,6 +143,7 @@ export class RolesController {
   }
 
   @Delete(':id')
+  @ApiExcludeEndpoint()
   remove(@Param('id') id: string) {
     return this.rolesService.remove(+id);
   }
