@@ -5,10 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RiskTypesService } from '../risk_types/risk_types.service';
 import { RiskType } from '../risk_types/entities/risk_type.entity';
 import { UserTypesService } from '../user_types/user_types.service';
+import { AuditStatusService } from '../audit_status/audit_status.service';
+import { AuditStatus } from '../audit_status/entities/audit_status.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserType, RiskType])],
-  providers: [SeederService, UserTypesService, RiskTypesService],
+  imports: [TypeOrmModule.forFeature([UserType, RiskType, AuditStatus])],
+  providers: [
+    SeederService,
+    UserTypesService,
+    RiskTypesService,
+    AuditStatusService,
+  ],
   exports: [SeederService],
 })
 export class SeedModule {}
