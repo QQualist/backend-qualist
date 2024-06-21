@@ -15,7 +15,7 @@ export class Audit {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ type: 'varchar', length: 25, nullable: false })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   name: string;
 
   @Column({ type: 'datetime', precision: 0, nullable: false })
