@@ -74,7 +74,28 @@ export class ResponsiblesService {
   }
 
   async update(uuid: string, updateResponsibleDto: UpdateResponsibleDto) {
-    return await this.userService.update(uuid, updateResponsibleDto);
+    const responsible = await this.userService.update(
+      uuid,
+      updateResponsibleDto,
+    );
+
+    const updateResponsibleData = {
+      name: `${responsible.name} ${responsible.surname.split(' ')[0]}`,
+      email: responsible.email,
+    };
+
+    const mailOptions = {
+      to: responsible.email,
+      subject: 'Qualist Account Update',
+    };
+
+    this.mailingService.sendMail(
+      'updateResponsible',
+      updateResponsibleData,
+      mailOptions,
+    );
+
+    return responsible;
   }
 
   remove(id: number) {
