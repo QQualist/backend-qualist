@@ -6,18 +6,17 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  ConflictException,
-  HttpStatus,
   Res,
+  HttpStatus,
+  ConflictException,
+  HttpException,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Response } from 'express';
+import { ResponsiblesService } from './responsibles.service';
+import { CreateResponsibleDto } from './dto/create-responsible.dto';
+import { UpdateResponsibleDto } from './dto/update-responsible.dto';
 import { ValidationPipe } from '../validation.pipe';
-import { IsPublic } from '../auth/decorators/is-public.decorator';
+import { Response } from 'express';
 import {
   ApiBody,
   ApiExcludeEndpoint,
@@ -28,17 +27,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-@Controller('users')
-@ApiTags('Users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('responsibles')
+@ApiTags('responsibles')
+export class ResponsiblesController {
+  constructor(private readonly responsiblesService: ResponsiblesService) {}
 
   @Post()
-  @IsPublic()
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Create a new responsible' })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'The user has been successfully created.',
+    description: 'The responsible has been successfully created.',
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
@@ -52,14 +50,15 @@ export class UsersController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request.',
   })
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: CreateResponsibleDto })
   async create(
-    @Body(new ValidationPipe()) createUserDto: CreateUserDto,
+    @Body(new ValidationPipe()) createResponsibleDto: CreateResponsibleDto,
     @Res() response: Response,
   ) {
     try {
-      const user = await this.usersService.create(createUserDto);
-      return response.status(HttpStatus.CREATED).send(user);
+      const responsible =
+        await this.responsiblesService.create(createResponsibleDto);
+      return response.status(HttpStatus.CREATED).send(responsible);
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -69,8 +68,8 @@ export class UsersController {
     }
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Find all users' })
+  @Get('/departament/:departament_uuid')
+  @ApiOperation({ summary: 'Find all responsibles by departament UUID' })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer token',
@@ -78,33 +77,42 @@ export class UsersController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Users found.',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User not authorized to do the operation.',
+    description: 'Responsibles found',
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error.',
   })
-  async findAll(@Res() response: Response) {
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiParam({
+    name: 'departament_uuid',
+    description: 'UUID of the departament',
+  })
+  async findAll(
+    @Param('departament_uuid') departament_uuid: string,
+    @Res() response: Response,
+  ) {
     try {
-      const users = await this.usersService.findAll();
-      return response.status(HttpStatus.OK).send(users);
+      const responsibles =
+        await this.responsiblesService.findAll(departament_uuid);
+
+      return response.status(HttpStatus.OK).send(responsibles);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Get(':uuid')
+  @Get(':id')
   @ApiExcludeEndpoint()
-  findOne(@Param('uuid') uuid: string) {
-    return this.usersService.findOne(uuid);
+  findOne(@Param('id') id: string) {
+    return this.responsiblesService.findOne(+id);
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'Update a user' })
+  @ApiOperation({ summary: 'Update a responsible' })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer token',
@@ -112,7 +120,7 @@ export class UsersController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Updated user.',
+    description: 'Updated responsible.',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -126,16 +134,19 @@ export class UsersController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error.',
   })
-  @ApiBody({ type: UpdateUserDto })
-  @ApiParam({ name: 'uuid', description: 'UUID of the user' })
+  @ApiBody({ type: UpdateResponsibleDto })
+  @ApiParam({ name: 'uuid', description: 'UUID of the responsible' })
   async update(
     @Param('uuid') uuid: string,
-    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+    @Body(new ValidationPipe()) updateResponsibleDto: UpdateResponsibleDto,
     @Res() response: Response,
   ) {
     try {
-      const user = await this.usersService.update(uuid, updateUserDto);
-      return response.status(HttpStatus.OK).send(user);
+      const responsible = await this.responsiblesService.update(
+        uuid,
+        updateResponsibleDto,
+      );
+      return response.status(HttpStatus.OK).send(responsible);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -148,6 +159,6 @@ export class UsersController {
   @Delete(':id')
   @ApiExcludeEndpoint()
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.responsiblesService.remove(+id);
   }
 }

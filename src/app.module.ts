@@ -12,7 +12,10 @@ import { ChecklistsModule } from './checklists/checklists.module';
 import { PrioritiesModule } from './priorities/priorities.module';
 import { ItemsModule } from './items/items.module';
 import { RiskTypesModule } from './risk_types/risk_types.module';
-
+import { ResponsiblesModule } from './responsibles/responsibles.module';
+import { MailingModule } from './mailing/mailing.module';
+import { UserTypesModule } from './user_types/user_types.module';
+import { RolesModule } from './roles/roles.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -38,6 +41,10 @@ import { RiskTypesModule } from './risk_types/risk_types.module';
     PrioritiesModule,
     ItemsModule,
     RiskTypesModule,
+    ResponsiblesModule,
+    MailingModule,
+    UserTypesModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [

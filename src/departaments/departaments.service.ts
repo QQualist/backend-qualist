@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartamentDto } from './dto/create-departament.dto';
 import { UpdateDepartamentDto } from './dto/update-departament.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,8 +32,18 @@ export class DepartamentsService {
     return await this.departamentRepo.findOneBy({ uuid });
   }
 
-  update(id: number, updateDepartamentDto: UpdateDepartamentDto) {
-    return `This action updates a #${id} departament`;
+  async update(uuid: string, updateDepartamentDto: UpdateDepartamentDto) {
+    const departamentExists = await this.departamentRepo.findOneBy({ uuid });
+
+    if (!departamentExists) {
+      throw new NotFoundException('Departament not found');
+    }
+
+    const departament = this.departamentRepo.create(updateDepartamentDto);
+
+    await this.departamentRepo.update(uuid, departament);
+
+    return await this.departamentRepo.findOneBy({ uuid });
   }
 
   remove(id: number) {

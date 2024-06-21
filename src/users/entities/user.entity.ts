@@ -1,6 +1,6 @@
 import { Departament } from '../../departaments/entities/departament.entity';
 import { Role } from '../../roles/entities/role.entity';
-import { UserType } from '../../seeders/entities/user-type.entity';
+import { UserType } from '../../user_types/entities/user-type.entity';
 import {
   Column,
   CreateDateColumn,

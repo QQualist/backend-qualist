@@ -1,11 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateHashPassword } from '../utils/createHashPassword';
-import { UserType } from '../seeders/entities/user-type.entity';
+import { UserType } from '../user_types/entities/user-type.entity';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +50,19 @@ export class UsersService {
     };
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    const users = await this.userRepo.find({
+      order: {
+        name: 'ASC',
+      },
+    });
+
+    for (const user of users) {
+      //Remove password attribute
+      delete user.password;
+    }
+
+    return users;
   }
 
   async findOne(uuid: string) {
@@ -78,8 +93,33 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(uuid: string, updateUserDto: UpdateUserDto) {
+    const userExists = await this.userRepo.findOneBy({ uuid });
+
+    if (!userExists) {
+      throw new NotFoundException('User not found.');
+    }
+
+    const createdUser = this.userRepo.create({
+      ...updateUserDto,
+      role: { uuid: updateUserDto.role_uuid },
+      departament: { uuid: updateUserDto.departament_uuid },
+      superior: { uuid: updateUserDto.superior_uuid },
+      type: { id: updateUserDto.type_id },
+    });
+
+    await this.userRepo.update(uuid, createdUser);
+
+    const user = await this.findOne(uuid);
+
+    if (user.superior) {
+      delete user.superior.password;
+    }
+
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
   remove(id: number) {
