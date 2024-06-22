@@ -15,7 +15,7 @@ export class AuditsService {
   async create(createAuditDto: CreateAuditDto) {
     const createAudit = this.auditRepo.create({
       ...createAuditDto,
-      audit_status_id: 1, // 1 = CREATED
+      audit_status: { id: 1 }, // 1 = CREATED
     });
 
     const audit = await this.auditRepo.save(createAudit);
@@ -23,8 +23,15 @@ export class AuditsService {
     return audit;
   }
 
-  findAll() {
-    return `This action returns all audits`;
+  async findAll() {
+    return await this.auditRepo.find({
+      relations: {
+        audit_status: true,
+      },
+      order: {
+        date: 'ASC',
+      },
+    });
   }
 
   findOne(id: number) {

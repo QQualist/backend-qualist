@@ -58,8 +58,31 @@ export class AuditsController {
   }
 
   @Get()
-  findAll() {
-    return this.auditsService.findAll();
+  @ApiOperation({ summary: 'Find all audits' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Audits found',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  async findAll(@Res() response: Response) {
+    try {
+      const audits = await this.auditsService.findAll();
+      return response.status(HttpStatus.OK).send(audits);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')
