@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuditDto } from './dto/create-audit.dto';
 import { UpdateAuditDto } from './dto/update-audit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,7 +42,34 @@ export class AuditsService {
     return `This action updates a #${id} audit`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} audit`;
+  async remove(uuid: string) {
+    const auditExists = await this.auditRepo.findOneBy({ uuid });
+
+    if (!auditExists) {
+      throw new NotFoundException('Audit not found');
+    }
+
+    await this.auditRepo.softDelete({ uuid });
+  }
+
+  async restore(uuid: string) {
+    const auditExists = await this.auditRepo.findOne({
+      relations: {
+        audit_status: true,
+      },
+      where: { uuid },
+      withDeleted: true,
+    });
+
+    if (!auditExists) {
+      throw new NotFoundException('Audit not found');
+    }
+
+    if (!auditExists.deletedAt) {
+      throw new NotFoundException('Audit is not deleted');
+    }
+
+    await this.auditRepo.restore({ uuid });
+    return auditExists;
   }
 }
