@@ -18,6 +18,7 @@ import { UserTypesModule } from './user_types/user_types.module';
 import { RolesModule } from './roles/roles.module';
 import { AuditStatusModule } from './audit_status/audit_status.module';
 import { AuditsModule } from './audits/audits.module';
+import { RemindersModule } from './reminders/reminders.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -49,6 +50,7 @@ import { AuditsModule } from './audits/audits.module';
     RolesModule,
     AuditStatusModule,
     AuditsModule,
+    RemindersModule,
   ],
   controllers: [],
   providers: [
