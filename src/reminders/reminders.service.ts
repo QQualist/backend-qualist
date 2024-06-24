@@ -14,21 +14,25 @@ export class RemindersService {
     const count = await this.reminderRepo.count();
     if (count === 0) {
       await this.reminderRepo.save([
-        { name: 'NO MOMENTO DA AUDITORIA', time: 1 },
-        { name: '5 MINUTOS ANTES', time: 300 },
-        { name: '10 MINUTOS ANTES', time: 600 },
-        { name: '15 MINUTOS ANTES', time: 900 },
-        { name: '30 MINUTOS ANTES', time: 1800 },
-        { name: '1 HORA ANTES', time: 3600 },
-        { name: '2 HORAS ANTES', time: 7200 },
-        { name: '1 DIA ANTES', time: 86400 },
-        { name: '2 DIAS ANTES', time: 172800 },
+        { name: 'AT THE TIME OF THE AUDIT', time: 1 },
+        { name: '5 MINUTES BEFORE', time: 300 },
+        { name: '10 MINUTES BEFORE', time: 600 },
+        { name: '15 MINUTES BEFORE', time: 900 },
+        { name: '30 MINUTES BEFORE', time: 1800 },
+        { name: '1 HOUR BEFORE', time: 3600 },
+        { name: '2 HOURS BEFORE', time: 7200 },
+        { name: '1 DAY BEFORE', time: 86400 },
+        { name: '2 DAYS BEFORE', time: 172800 },
       ]);
     }
   }
 
-  findAll() {
-    return `This action returns all reminders`;
+  async findAll() {
+    return await this.reminderRepo.find({
+      order: {
+        time: 'ASC',
+      },
+    });
   }
 
   findOne(id: number) {
