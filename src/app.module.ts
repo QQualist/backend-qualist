@@ -19,6 +19,7 @@ import { RolesModule } from './roles/roles.module';
 import { AuditStatusModule } from './audit_status/audit_status.module';
 import { AuditsModule } from './audits/audits.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { AuditRemindersModule } from './audit_reminders/audit_reminders.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -51,6 +52,7 @@ import { RemindersModule } from './reminders/reminders.module';
     AuditStatusModule,
     AuditsModule,
     RemindersModule,
+    AuditRemindersModule,
   ],
   controllers: [],
   providers: [
