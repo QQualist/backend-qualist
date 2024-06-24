@@ -3,6 +3,7 @@ import { AuditsController } from './audits.controller';
 import { AuditsService } from './audits.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Audit } from './entities/audit.entity';
+import { AuditRemindersService } from '../audit_reminders/audit_reminders.service';
 
 describe('AuditsController', () => {
   let controller: AuditsController;
@@ -14,6 +15,10 @@ describe('AuditsController', () => {
         AuditsService,
         {
           provide: getRepositoryToken(Audit),
+          useValue: {},
+        },
+        {
+          provide: AuditRemindersService,
           useValue: {},
         },
       ],

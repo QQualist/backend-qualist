@@ -4,8 +4,8 @@ import { UpdateAuditDto } from './dto/update-audit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Audit } from './entities/audit.entity';
 import { Repository } from 'typeorm';
-import { AuditRemindersService } from 'src/audit_reminders/audit_reminders.service';
-import { CreateAuditReminderDto } from 'src/audit_reminders/dto/create-audit_reminder.dto';
+import { AuditRemindersService } from '../audit_reminders/audit_reminders.service';
+import { CreateAuditReminderDto } from '../audit_reminders/dto/create-audit_reminder.dto';
 
 @Injectable()
 export class AuditsService {
