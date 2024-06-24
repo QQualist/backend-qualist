@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuditsService } from './audits.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Audit } from './entities/audit.entity';
+import { AuditRemindersService } from '../audit_reminders/audit_reminders.service';
 
 describe('AuditsService', () => {
   let service: AuditsService;
@@ -12,6 +13,10 @@ describe('AuditsService', () => {
         AuditsService,
         {
           provide: getRepositoryToken(Audit),
+          useValue: {},
+        },
+        {
+          provide: AuditRemindersService,
           useValue: {},
         },
       ],

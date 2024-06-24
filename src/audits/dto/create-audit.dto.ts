@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
 import { IsFutureDate } from '../decorators/is-future-date';
+import { AuditReminder } from 'src/audit_reminders/entities/audit_reminder.entity';
+import { CreateAuditReminderDto } from 'src/audit_reminders/dto/create-audit_reminder.dto';
 
 export class CreateAuditDto {
   @IsString()
@@ -25,4 +29,8 @@ export class CreateAuditDto {
   })
   @ApiProperty({ description: 'Date and time of the scheduled audit' })
   date: string;
+
+  @IsArray()
+  @IsOptional()
+  reminders?: CreateAuditReminderDto[];
 }
