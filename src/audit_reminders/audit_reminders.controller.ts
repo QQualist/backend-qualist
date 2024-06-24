@@ -8,7 +8,7 @@ export class AuditRemindersController {
   constructor(private readonly auditRemindersService: AuditRemindersService) {}
 
   @Post()
-  create(@Body() createAuditReminderDto: CreateAuditReminderDto) {
+  create(@Body() createAuditReminderDto: CreateAuditReminderDto[]) {
     return this.auditRemindersService.create(createAuditReminderDto);
   }
 

@@ -12,8 +12,23 @@ export class AuditRemindersService {
     private readonly auditReminderRepo: Repository<AuditReminder>,
   ) {}
 
-  create(createAuditReminderDto: CreateAuditReminderDto) {
-    return 'This action adds a new auditReminder';
+  async create(createAuditReminderDto: CreateAuditReminderDto[]) {
+    // Iterate over each provided auditReminder data and create a new AuditReminder entity
+    for (const auditReminderData of createAuditReminderDto) {
+      const auditReminderExists = await this.auditReminderRepo.findOneBy({
+        audit: { uuid: auditReminderData.audit_uuid },
+        reminder: { id: auditReminderData.reminder_id },
+      });
+
+      if (!auditReminderExists) {
+        const createdAuditReminder = this.auditReminderRepo.create({
+          audit: { uuid: auditReminderData.audit_uuid },
+          reminder: { id: auditReminderData.reminder_id },
+        });
+
+        await this.auditReminderRepo.save(createdAuditReminder);
+      }
+    }
   }
 
   findAll() {
