@@ -6,7 +6,7 @@ import { Audit } from './entities/audit.entity';
 import { Repository } from 'typeorm';
 import { AuditRemindersService } from '../audit_reminders/audit_reminders.service';
 import { CreateAuditReminderDto } from '../audit_reminders/dto/create-audit_reminder.dto';
-import { AuditReminder } from 'src/audit_reminders/entities/audit_reminder.entity';
+import { AuditReminder } from '../audit_reminders/entities/audit_reminder.entity';
 
 @Injectable()
 export class AuditsService {
