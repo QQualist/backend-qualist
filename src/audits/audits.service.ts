@@ -6,6 +6,7 @@ import { Audit } from './entities/audit.entity';
 import { Repository } from 'typeorm';
 import { AuditRemindersService } from '../audit_reminders/audit_reminders.service';
 import { CreateAuditReminderDto } from '../audit_reminders/dto/create-audit_reminder.dto';
+import { AuditReminder } from '../audit_reminders/entities/audit_reminder.entity';
 
 @Injectable()
 export class AuditsService {
@@ -13,6 +14,8 @@ export class AuditsService {
     @InjectRepository(Audit)
     private readonly auditRepo: Repository<Audit>,
     private readonly auditReminderService: AuditRemindersService,
+    @InjectRepository(AuditReminder)
+    private readonly auditReminderRepo: Repository<AuditReminder>,
   ) {}
 
   async create(createAuditDto: CreateAuditDto) {
@@ -64,6 +67,11 @@ export class AuditsService {
     if (!auditExists) {
       throw new NotFoundException('Audit not found');
     }
+
+    // Delete all reminders associate the audit
+    await this.auditReminderRepo.softDelete({
+      audit: { uuid },
+    });
 
     await this.auditRepo.softDelete({ uuid });
   }
