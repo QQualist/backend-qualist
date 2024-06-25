@@ -20,6 +20,7 @@ import { AuditStatusModule } from './audit_status/audit_status.module';
 import { AuditsModule } from './audits/audits.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { AuditRemindersModule } from './audit_reminders/audit_reminders.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -37,6 +38,7 @@ import { AuditRemindersModule } from './audit_reminders/audit_reminders.module';
       validate,
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     UsersModule,
     DepartamentsModule,
     SeedModule,

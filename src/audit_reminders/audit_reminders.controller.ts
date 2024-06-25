@@ -1,11 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Sse,
+} from '@nestjs/common';
 import { AuditRemindersService } from './audit_reminders.service';
 import { CreateAuditReminderDto } from './dto/create-audit_reminder.dto';
 import { UpdateAuditReminderDto } from './dto/update-audit_reminder.dto';
+import { Observable } from 'rxjs';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('audit-reminders')
 export class AuditRemindersController {
   constructor(private readonly auditRemindersService: AuditRemindersService) {}
+
+  @Sse('event')
+  @IsPublic()
+  sendEvent(): Observable<MessageEvent> {
+    return this.auditRemindersService.getSseEvents();
+  }
 
   @Post()
   create(@Body() createAuditReminderDto: CreateAuditReminderDto[]) {
@@ -23,7 +40,10 @@ export class AuditRemindersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuditReminderDto: UpdateAuditReminderDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateAuditReminderDto: UpdateAuditReminderDto,
+  ) {
     return this.auditRemindersService.update(+id, updateAuditReminderDto);
   }
 

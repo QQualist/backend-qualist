@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -33,4 +34,7 @@ export class AuditReminder {
 
   @Column({ type: 'datetime', precision: 0, default: null, nullable: true })
   notificationSentAt: Date;
+
+  @DeleteDateColumn({ type: 'datetime', nullable: true })
+  deletedAt: Date;
 }
