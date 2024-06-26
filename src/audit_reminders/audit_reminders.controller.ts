@@ -7,12 +7,21 @@ import {
   Param,
   Delete,
   Sse,
+  HttpStatus,
+  Res,
 } from '@nestjs/common';
 import { AuditRemindersService } from './audit_reminders.service';
 import { CreateAuditReminderDto } from './dto/create-audit_reminder.dto';
 import { UpdateAuditReminderDto } from './dto/update-audit_reminder.dto';
 import { Observable } from 'rxjs';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
+import {
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { Response } from 'express';
 
 @Controller('audit-reminders')
 export class AuditRemindersController {
@@ -29,9 +38,34 @@ export class AuditRemindersController {
     return this.auditRemindersService.create(createAuditReminderDto);
   }
 
-  @Get()
-  findAll() {
-    return this.auditRemindersService.findAll();
+  @Get('/audits/:audit_uuid')
+  @ApiOperation({ summary: 'Find all reminders by audit_uuid' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Reminders found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authorized to do the operation.',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error.',
+  })
+  @ApiParam({ name: 'audit_uuid', description: 'UUID of the audit' })
+  async findAll(
+    @Param('audit_uuid') audit_uuid: string,
+    @Res() response: Response,
+  ) {
+    try {
+      const reminders = await this.auditRemindersService.findAll(audit_uuid);
+      return response.status(HttpStatus.OK).send(reminders);
+    } catch (error) {}
   }
 
   @Get(':id')
