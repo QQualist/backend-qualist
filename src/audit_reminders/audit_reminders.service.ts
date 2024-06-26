@@ -83,8 +83,18 @@ export class AuditRemindersService {
     });
   }
 
-  findAll() {
-    return `This action returns all auditReminders`;
+  async findAll(audit_uuid: string) {
+    return await this.auditReminderRepo.find({
+      relations: {
+        audit: true,
+        reminder: true,
+      },
+      where: {
+        audit: {
+          uuid: audit_uuid,
+        },
+      },
+    });
   }
 
   findOne(id: number) {
