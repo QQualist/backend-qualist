@@ -9,6 +9,7 @@ import {
   Sse,
   HttpStatus,
   Res,
+  HttpException,
 } from '@nestjs/common';
 import { AuditRemindersService } from './audit_reminders.service';
 import { CreateAuditReminderDto } from './dto/create-audit_reminder.dto';
@@ -22,6 +23,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { ValidationPipe } from '../validation.pipe';
 
 @Controller('audit-reminders')
 export class AuditRemindersController {
@@ -34,8 +36,20 @@ export class AuditRemindersController {
   }
 
   @Post()
-  create(@Body() createAuditReminderDto: CreateAuditReminderDto[]) {
-    return this.auditRemindersService.create(createAuditReminderDto);
+  async create(
+    @Body(new ValidationPipe())
+    createAuditReminderDto: CreateAuditReminderDto[],
+    @Res() response: Response,
+  ) {
+    try {
+      console.log(createAuditReminderDto);
+      const audit_reminder = await this.auditRemindersService.create(
+        createAuditReminderDto,
+      );
+      return response.status(HttpStatus.NO_CONTENT).send(audit_reminder);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get('/audits/:audit_uuid')

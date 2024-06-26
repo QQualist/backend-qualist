@@ -26,7 +26,7 @@ export class AuditsService {
 
     const audit = await this.auditRepo.save(createAudit);
 
-    if (createAuditDto.reminders.length > 0) {
+    if (createAuditDto.reminders && createAuditDto.reminders.length > 0) {
       // Create audit reminder array
       const reminders: CreateAuditReminderDto[] = [];
       for (const reminder of createAuditDto.reminders) {
