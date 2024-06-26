@@ -1,11 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateItemStatusDto } from './dto/create-item_status.dto';
-import { UpdateItemStatusDto } from './dto/update-item_status.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ItemStatus } from './entities/item_status.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ItemStatusService {
-  create(createItemStatusDto: CreateItemStatusDto) {
-    return 'This action adds a new itemStatus';
+  constructor(
+    @InjectRepository(ItemStatus)
+    private readonly itemStatusRepo: Repository<ItemStatus>,
+  ) {}
+
+  async seed() {
+    const count = await this.itemStatusRepo.count();
+    if (count === 0) {
+      await this.itemStatusRepo.save([
+        { name: 'UNAUDITED' },
+        { name: 'COMPLIANT' },
+        { name: 'NON-COMPLIANT' },
+        { name: 'INAPPLICABLE' },
+        { name: 'OPEN' },
+        { name: 'STAGGERED' },
+        { name: 'RESOLVED' },
+        { name: 'WAIVED' },
+        { name: 'CLOSED' },
+      ]);
+    }
   }
 
   findAll() {
@@ -14,13 +33,5 @@ export class ItemStatusService {
 
   findOne(id: number) {
     return `This action returns a #${id} itemStatus`;
-  }
-
-  update(id: number, updateItemStatusDto: UpdateItemStatusDto) {
-    return `This action updates a #${id} itemStatus`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} itemStatus`;
   }
 }
