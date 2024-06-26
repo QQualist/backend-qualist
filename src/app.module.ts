@@ -21,6 +21,7 @@ import { AuditsModule } from './audits/audits.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { AuditRemindersModule } from './audit_reminders/audit_reminders.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ItemStatusModule } from './item_status/item_status.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -55,6 +56,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuditsModule,
     RemindersModule,
     AuditRemindersModule,
+    ItemStatusModule,
   ],
   controllers: [],
   providers: [

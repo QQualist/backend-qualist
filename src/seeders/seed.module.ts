@@ -9,10 +9,18 @@ import { AuditStatusService } from '../audit_status/audit_status.service';
 import { AuditStatus } from '../audit_status/entities/audit_status.entity';
 import { RemindersService } from '../reminders/reminders.service';
 import { Reminder } from '../reminders/entities/reminder.entity';
+import { ItemStatus } from '../item_status/entities/item_status.entity';
+import { ItemStatusService } from '../item_status/item_status.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserType, RiskType, AuditStatus, Reminder]),
+    TypeOrmModule.forFeature([
+      UserType,
+      RiskType,
+      AuditStatus,
+      Reminder,
+      ItemStatus,
+    ]),
   ],
   providers: [
     SeederService,
@@ -20,6 +28,7 @@ import { Reminder } from '../reminders/entities/reminder.entity';
     RiskTypesService,
     AuditStatusService,
     RemindersService,
+    ItemStatusService,
   ],
   exports: [SeederService],
 })
