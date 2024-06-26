@@ -42,7 +42,6 @@ export class AuditRemindersController {
     @Res() response: Response,
   ) {
     try {
-      console.log(createAuditReminderDto);
       const audit_reminder = await this.auditRemindersService.create(
         createAuditReminderDto,
       );
