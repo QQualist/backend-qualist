@@ -27,8 +27,8 @@ export class ItemStatusService {
     }
   }
 
-  findAll() {
-    return `This action returns all itemStatus`;
+  async findAll() {
+    return await this.itemStatusRepo.find();
   }
 
   findOne(id: number) {
